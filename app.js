@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const ejs = require("ejs");
 const bodyParser = require("body-parser");
+const Weather = require("./weather.js");
 
 const app = express();
 const port = 3000;
@@ -23,6 +24,31 @@ app.use(express.static("public"));
 app.use(express.static("public/images"));
 app.use(express.static("public/css"));
 app.use(bodyParser.urlencoded({extended: false}));
+
+
+app.get("/tracker", (req, res) =>{
+    res.render("tracker");
+});
+
+app.post("/weather", async (req, res) => {
+    try{
+        const {city, temperature, humidity} = req.body;
+
+        const weatherData = new Weather({
+            city: city,
+            temperature: temperature,
+            humidity: humidity,
+        });
+
+        await weatherData.save();
+
+      res.redirect("/tracker");
+
+    }catch(err){
+        res.status(500).send("Internal Server Error", err)
+}
+
+});
 
 
 app.listen(port, () =>{

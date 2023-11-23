@@ -1,9 +1,38 @@
 <!DOCTYPE html>
 
 <html>
+    <head>
+        <link rel="stylesheet" href="/style.css" />
+    </head>
 
+    <body>
+        <header>
+        <h2>Enter Weather Data for Cities</h2>
+        </header>
 
+        <form action="/weather" method="POST" >
 
+        <label for="city">City:</label>
+        <select name="city" id="city">
+            <option value="toronto">Toronto</option>
+            <option value="calgary">Calgary</option>
+            <option value="london">London</option>
+            <option value="montreal">Montreal</option>
+            <option value="reddeer">RedDeer</option>
+            <option value="singapore">Singapore</option>
+            <option value="mumbai">Mumbai</option>
+            <option value="sydney">Sydney</option>
+        </select>
 
+        <label for="temperature">Temperature (in Celcius):</label>
+        <input type="number" name="temperature" id="temperature" required>
+
+        <label for="humidity">Humidity:</label>
+        <input type="number" name="humidity" id="humidity" required>
+
+        <button type="submit">Submit</button>
+        </form>
+
+    </body>
 
 </html>
