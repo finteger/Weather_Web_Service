@@ -13,6 +13,25 @@
 
     <body>
 
+        <div class="flex-container-1">
+            <div id="flex-item-1">
+                <div id="alert" style="background:red; padding: 25px; color: #fff; border-radius:25px;">
+                
+                    <ul>
+                        <% if (messageType && headline && sender) { %>
+                        <p>Message Type: <%= messageType %></p>
+                        <p>Headline: <%= headline %></p>
+                        <p>Sender: <%= sender %></p>
+                        <% } else { %>
+                        <p>No active weather alerts at this time</p>
+                        <% } %>    
+                    </ul>
+                
+                </div>
+            </div>
+        </div>
+
+
         <canvas id="myChart"></canvas>
 
         <div class="row mt-3">
