@@ -26,6 +26,17 @@ app.use(express.static("public/css"));
 app.use(bodyParser.urlencoded({extended: false}));
 
 
+
+app.get('/', async (req, res) =>{
+    try{
+        const weatherData = await Weather.find({});
+        res.render('home', {weatherData});
+    }catch(error){
+      res.status(500).send("Internal Server Error", error);
+    }
+});
+
+
 app.get("/tracker", (req, res) =>{
     res.render("tracker");
 });

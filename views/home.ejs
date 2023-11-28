@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <link rel="stylesheet" href="/style.css" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial scale=1.0">
+        <title>Weather Web Service</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body>
+
+        <canvas id="myChart"></canvas>
+
+        <div class="row mt-3">
+            <% weatherData.forEach((data) => { %>
+                <div class="col-md-4">
+                    <div class="card" style="background-image:url('/images/<%=data.city.toLowerCase() %>.jpg');background-size:cover;">
+                      <div class="card-header">
+                        <%= data.city %>
+                     </div>
+                     <div class="card-body" style="width:400px">
+                        <h5 class="card-title"><%= data.temperature %>℃</h5>
+                        <% if(data.temperature < 0) { %>
+                        <i class="fas fa-snowflake fa-5x"></i>
+                        <% } else if (data.temperature > 20) { %>
+                        <i class="fas fa-sun fa-5x"></i>
+                        <% } else { %>
+                        <i class="fas fa-cloud fa-5x"></i>
+                        <% } %>
+                        <p class="card-text">Humidity:&nbsp;<%= data.humidity %></p>
+                    </div>
+                </div>
+                <% }); %>
+           </div>
+        </div>
+    </body>
+
+<script>
+
+    //Get the weather data 
+    const weatherMap = JSON.parse('<%- JSON.stringify(weatherData) %>');
+
+    //Extracting temperature and city names from database
+    const temperatures = weatherMap.map((data => data.temperature));
+    const cities = weatherMap.map((data => data.city));
+
+    //Create a new chart object or instance
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx,{
+    type:'bar',
+    data:{
+        labels: cities,
+        datasets: [{
+            label: 'Temperature',
+            data: temperatures,
+        }]
+      }    
+    });
+
+</script>
+
+</html>
