@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const Weather = require("./weather.js");
 const axios = require("axios");
 const multer = require("multer");
+const fs = require("fs");
 
 const app = express();
 const port = 3000;
@@ -84,7 +85,7 @@ var storage = multer.diskStorage({
     filename: function(req, file, cb){
 
         console.log(file)
-        cb(null, file. originalname + '-' + Date.now());
+        cb(null, file.originalname + '-' + Date.now());
       },
 });
 
@@ -92,6 +93,23 @@ var upload = multer({storage: storage});
 
 
 app.post("/uploadphoto", upload.single('myImage'), (req, res) => {
+// req.file
+
+    var img = fs.readFileSync(req.file.path);
+    var encode_img = img.toString('base64');
+    var final_img = {
+        contentType: req.file.mimetype,
+        data: new Buffer.from(encode_img, 'base64'),
+    }
+
+    const image = new Image({
+        name: req.body.name,
+        desc: req.body.desc,
+        img: final_img,
+    });
+
+    image.save();
+
 
 });
 
