@@ -46,7 +46,36 @@ app.get('/', async (req, res) =>{
         sender = alertData.senderName;
 
         const weatherData = await Weather.find({});
-        res.render('home', {weatherData, messageType, headline, sender});
+       
+        const imager = await Image.find({});
+        const images = imager.map(image => {
+        return{
+            name: image.name,
+            desc: image.desc,
+            data: image.img.data.toString('base64'),
+        }
+        });
+
+        const videor = await Video.find({});
+        const videos = videor.map(video => {
+        return{
+            name: video.name,
+            desc: video.desc,
+            contentType: video.vid.contentType,
+            data: video.vid.data.toString('base64'),
+        }
+        });
+
+        console.log(videos);
+
+    res.render('home', 
+    { weatherData,
+      messageType,
+      headline,
+      sender,
+      videos,
+      images
+    });
 
     }catch(error){
       res.status(500).send("Internal Server Error", error);

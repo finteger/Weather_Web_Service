@@ -31,6 +31,21 @@
             </div>
         </div>
 
+        <div id="vidContainer">
+            <% videos.forEach((video) => { %>
+                <div id="vidElement">
+                    <video width="320" height="240" autoplay muted controls>
+                        <source src="data:<%= video.contentType %>;base64,<%= video.data.toString('base64') %>"  type="<%= video.contentType %>" >
+                    </video>
+
+                    <div id="vidScaffold">
+                        <h2 style="text-align:center"><%= video.name %></h2>
+                        <p style="text-align:center"><%= video.desc %></p>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+
 
         <canvas id="myChart"></canvas>
 
