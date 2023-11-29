@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const ejs = require("ejs");
 const bodyParser = require("body-parser");
 const Weather = require("./weather.js");
+const Image = require("./image.js");
+const Video = require("./video.js");
 const axios = require("axios");
 const multer = require("multer");
 const fs = require("fs");
@@ -110,7 +112,25 @@ app.post("/uploadphoto", upload.single('myImage'), (req, res) => {
 
     image.save();
 
+});
 
+
+app.post("/uploadvideo", upload.single('myVideo'), (req, res) => {
+    // req.file
+    
+        var vid = fs.readFileSync(req.file.path);
+        var encode_vid = vid.toString('base64');
+        var final_vid = {
+            contentType: req.file.mimetype,
+            data: new Buffer.from(encode_vid, 'base64'),
+        }
+    
+        const video = new Video({
+            name: req.body.name,
+            desc: req.body.desc,
+            vid: final_vid,
+        });
+        video.save();  
 });
 
 
