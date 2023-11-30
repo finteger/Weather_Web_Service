@@ -162,7 +162,59 @@ app.post("/uploadvideo", upload.single('myVideo'), (req, res) => {
         video.save();  
 });
 
+app.post("/uploadphoto", upload.single('myImage'), (req, res) => {
+    // req.file
+    
+        var img = fs.readFileSync(req.file.path);
+        var encode_img = img.toString('base64');
+        var final_img = {
+            contentType: req.file.mimetype,
+            data: new Buffer.from(encode_img, 'base64'),
+        }
+    
+        const image = new Image({
+            name: req.body.name,
+            desc: req.body.desc,
+            img: final_img,
+        });
+        image.save();  
+});
 
+app.get("/api/v1/videos", async (req, res) =>{
+    try {
+        const videos = await Video.find({});
+        const individualVideo = videos.map((video) =>{
+
+            const videoData = video.vid.data.toString('base64');
+
+            return {
+                contentType: video.vid.contentType,
+                data: videoData,
+            };
+        });
+        res.json(individualVideo);
+    }catch(error){
+        res.status(500).send("Internal Server Error", error);
+    }
+});
+
+app.get("/api/v1/images", async (req, res) =>{
+    try {
+        const images = await Image.find({});
+        const individualImage = images.map((image) =>{
+
+            const imageData = image.img.data.toString('base64');
+
+            return {
+                contentType: image.img.contentType,
+                data: imageData,
+            };
+        });
+        res.json(individualImage);
+    }catch(error){
+        res.status(500).send("Internal Server Error", error);
+    }
+});
 
 
 app.listen(port, () =>{
