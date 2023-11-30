@@ -66,7 +66,7 @@ app.get('/', async (req, res) =>{
         }
         });
 
-        console.log(videos);
+     
 
     res.render('home', 
     { weatherData,
