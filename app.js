@@ -92,6 +92,12 @@ app.get('/', async (req, res) =>{
         });
 
      
+    let fetchedData;
+
+    axios.get('https://api.openweathermap.org/data/2.5/weather?lat=52.2668&lon=-113.802&appid=ce8eb3004b0dcfd8664bd52d8f1eae78')
+    .then(response => {
+
+    fetchedData = response.data;
 
     res.render('home', 
     { weatherData,
@@ -99,7 +105,9 @@ app.get('/', async (req, res) =>{
       headline,
       sender,
       videos,
-      images
+      images,
+      fetchedData
+      });
     });
 
     }catch(error){

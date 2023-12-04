@@ -11,46 +11,89 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
 
-    <body>
+    <body style="max-width:1100px;">
+
+        <h2 style="background: lightblue; padding: 10px; border-radius: 10px;">
+        <i class="fa-solid fa-bolt-lightning" style="color: yellow"></i>&nbsp;    
+        Latest Weather Uploads:</h2>
 
         <div class="flex-container-1">
-            <div id="flex-item-1">
-                <div id="alert" style="background:red; padding: 25px; color: #fff; border-radius:25px;">
-                
+        
+        <div class="flex-item-1">
+        <div id="alert" style="background: red;padding:25px; color: #fff; border-radius:25px;">
+        
+            <ul>
+                <% if (messageType && headline && sender) { %>
+                <p>Message Type: <%= messageType %></p>
+                <p>Headline: <%= headline %></p>
+                <p>Sender: <%= sender %></p>
+                <% } else { %>
+                <p>No active weather alerts at this time.</p>
+                <% } %>
+            </ul>
+        
+        </div>
+            <div class="linkContainer">
+                <p>
                     <ul>
-                        <% if (messageType && headline && sender) { %>
-                        <p>Message Type: <%= messageType %></p>
-                        <p>Headline: <%= headline %></p>
-                        <p>Sender: <%= sender %></p>
-                        <% } else { %>
-                        <p>No active weather alerts at this time</p>
-                        <% } %>    
+                        <li style="margin-bottom:20px;"><i class="fa-solid fa-list-ul"></i> &nbsp;&nbsp;<a href="/api/docs">Api Documentation</a></li>
+                        <li><i class="fa-solid fa-satellite-dish"></i>&nbsp;&nbsp;<a href="/tracker">Weather Tracker</a></li>
                     </ul>
-                
-                </div>
+                </p> 
             </div>
-        </div>
-
-        <div id="vidContainer">
-            <% videos.forEach((video) => { %>
-                <div id="vidElement">
-                    <video width="320" height="240" autoplay muted controls>
-                        <source src="data:<%= video.contentType %>;base64,<%= video.data.toString('base64') %>"  type="<%= video.contentType %>" >
-                    </video>
-
-                    <div id="vidScaffold">
-                        <h2 style="text-align:center"><%= video.name %></h2>
-                        <p style="text-align:center"><%= video.desc %></p>
-                    </div>
+            <form action="/login" method="post">
+                <div id="align">
+                    <input type="text" name="email" placeholder="Email"></input>
+                    <input type="text" name="password" placeholder="Password"></input>
                 </div>
-            <% }); %>
+                <div id="spacer">
+                <button type="submit">Login in</button>
+                    <a href="/register">Register</a>
+                    <a href="#">Forgot password?</a>
+                    <a href="#">Login instructions</a>
+                </div>
+            </form>
         </div>
+        
+        
+        <div class="flex-item-1">
+              <div class="weather-info">
+                <h1><% fetchedData.name %> Weather Information</h1>
 
-        <div id="imgContainer">
-            <% images.forEach((image) => { %>
-               <img id="weatherImg" src="data:image/*;base64,<%= image.data %>">
-            <% }); %>
+                <div class="weather-details">
+                    <p class="temperature"><strong>Temperature:</strong><%= (fetchedData.main.temp - 273.15).toFixed(2) %></p>
+                    <p class="humidity"><strong>Humidit:</strong><%= fetchedData.main.humidity %></p>
+                    <p class="wind-speed"><strong>Wind Speed:</strong><%= fetchedData.wind.speed %></p>
+                </div>
+              </div>
         </div>
+        </div>
+        
+        
+        
+        <div id="vidContainer">
+        <% videos.forEach((video) => { %>
+            <div id="vidElement">
+                <video width="320" height="240" autoplay muted controls>
+                    <source src="data:<%= video.contentType %>;base64,<%= video.data.toString('base64') %>" type="<%= video.contentType %>">
+                </video>
+        
+                <div id="vidScaffold">
+                <h2 style="text-align:center;"><%= video.name %></h2>
+                <p style="text-align: center;"><%= video.desc %></p>
+                </div>
+            </div>  
+            <% }) %>
+        </div>
+        
+        
+        
+        <div style="display:flex !important; margin: 20px; overflow-x: scroll; overflow-y: hidden;">
+            <% images.forEach((image) => { %>
+                <img src='data:image.jpeg;base64,<%= image.data %>' style="border: 6px solid transparent;height:100px;width:100px;border-radius:25px;"></img>
+            <% }) %>    
+        </div>
+        
 
 
         <canvas id="myChart"></canvas>
