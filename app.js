@@ -8,6 +8,7 @@ const Video = require("./video.js");
 const axios = require("axios");
 const multer = require("multer");
 const fs = require("fs");
+const mcache = require("memory-cache");
 
 const app = express();
 const port = 3000;
@@ -29,6 +30,30 @@ app.use(express.static("public"));
 app.use(express.static("public/images"));
 app.use(express.static("public/css"));
 app.use(bodyParser.urlencoded({extended: false}));
+
+//High-level middleware to cache pages in  memory
+var cache = (duration) =>{
+    return (req, res, next) => {
+        let key = '__express__' + req.originalUrl || req.url;
+        let cacheBody = mcache.get(key);
+        if(cacheBody){
+            res.send(cacheBody);
+            return;
+        } else {
+            res.sendResponse = res.send;
+            res.send = (body) =>{
+
+            mcache.put(key, body, duration * 1000);
+            res.sendResponse(body);
+            }
+   
+        }
+        next();
+    }
+}
+
+
+//cache(100), 
 
 app.get('/', async (req, res) =>{
     
@@ -215,6 +240,18 @@ app.get("/api/v1/images", async (req, res) =>{
         res.status(500).send("Internal Server Error", error);
     }
 });
+
+app.get("/api/v1/weather", async (req, res) =>{
+    try{
+        const weatherData =  await Weather.find({});
+
+        res.json(weatherData);
+
+     }catch(error){
+        res.status(500).send("Internal Server Error", error);
+    }
+});
+
 
 
 app.listen(port, () =>{

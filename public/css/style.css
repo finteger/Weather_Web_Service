@@ -291,3 +291,14 @@ body {
     margin-bottom: 5px;
     border-radius: 5px;
   }
+  #weatherImg{
+  border: 6px solid transparent; 
+  height:100px;
+  border-radius:25px;
+  }
+  #imgContainer{
+  display: flex !important;
+  margin: 20px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  }

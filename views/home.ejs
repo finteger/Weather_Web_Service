@@ -43,7 +43,13 @@
                         <p style="text-align:center"><%= video.desc %></p>
                     </div>
                 </div>
-                <% }); %>
+            <% }); %>
+        </div>
+
+        <div id="imgContainer">
+            <% images.forEach((image) => { %>
+               <img id="weatherImg" src="data:image/*;base64,<%= image.data %>">
+            <% }); %>
         </div>
 
 
