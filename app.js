@@ -22,7 +22,7 @@ const WebSocket = require('ws');
 const app = express();
 const port = 3000;
 
-const url = `mongodb+srv://ToddN:Password123@cluster0.5x5qoad.mongodb.net/`;
+const url = `mongodb+srv://YourUsername:YourPassword@cluster0.5x5qoad.mongodb.net/`;
 
 mongoose.connect(url)
 .then(()=> {
@@ -165,7 +165,7 @@ app.get('/', async (req, res) =>{
      
     let fetchedData;
 
-    axios.get('https://api.openweathermap.org/data/2.5/weather?lat=52.2668&lon=-113.802&appid=ce8eb3004b0dcfd8664bd52d8f1eae78')
+    axios.get('https://api.openweathermap.org/data/2.5/weather?lat=52.2668&lon=-113.802&appid=YourSecretApiKey')
     .then(response => {
 
     fetchedData = response.data;
