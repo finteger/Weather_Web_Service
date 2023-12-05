@@ -12,6 +12,9 @@ const mcache = require("memory-cache");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./user.js");
+const cookieParser = require("cookie-parser");
+const swaggerui = require("swagger-ui-express");
+const swaggerjsdoc = require("swagger-jsdoc");
 
 const app = express();
 const port = 3000;
@@ -33,6 +36,43 @@ app.use(express.static("public"));
 app.use(express.static("public/images"));
 app.use(express.static("public/css"));
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(cookieParser());
+//req.cookie
+
+
+const options = {
+
+    definition: {
+            openapi: "3.1.0",
+            info: {
+                title: "Weather Web Service",
+                version: "1.0.0",
+                description: 
+                "Api documentation for the Weather Web Service",
+                license: {
+                    name: "License: MIT",
+                    url: "https://spdx.org/licenses/MIT.html",
+                        },
+                    },
+                    servers: [
+                        {
+                        url: "https://localhost:3000",
+                        }
+                  ]
+            },
+        apis: ["./*.js"]
+    };
+    
+const specs = swaggerjsdoc(options);
+    
+app.use(
+"/api/docs",
+swaggerui.serve,
+swaggerui.setup(specs, {explorer: true})
+);
+    
+
+
 
 //High-level middleware to cache pages in  memory
 var cache = (duration) =>{
@@ -58,10 +98,26 @@ var cache = (duration) =>{
 
 const secretKey = '__secreykey__';
 
+function authenticateToken(req, res, next){
 
-//cache(100), 
+    const token = req.cookies.jwt;
 
-app.get('/', async (req, res) =>{
+    if(token) {
+        jwt.verify(token, secretKey, (err, decoded) =>{
+            if(err) {
+                res.status(401).send('Invalid Token');
+            }
+          //req.userId = decoded;
+        });
+       next();
+    } else {
+    res.status(401).send('You are not authorized to access this page.');
+    }
+ }   
+
+
+
+app.get('/', cache(100), async (req, res) =>{
     
     let messageType;
     let headline;
@@ -201,7 +257,7 @@ app.post("/login", async (req, res) =>{
 
 
 
-app.get("/tracker", (req, res) =>{
+app.get("/tracker", authenticateToken, (req, res) =>{
     res.render("tracker");
 });
 
