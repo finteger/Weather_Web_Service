@@ -47,7 +47,7 @@
                     <input type="text" name="password" placeholder="Password"></input>
                 </div>
                 <div id="spacer">
-                <button type="submit">Login in</button>
+                <button type="submit">Login</button>
                     <a href="/register">Register</a>
                     <a href="#">Forgot password?</a>
                     <a href="#">Login instructions</a>
@@ -58,16 +58,26 @@
         
         <div class="flex-item-1">
               <div class="weather-info">
-                <h1><% fetchedData.name %> Weather Information</h1>
+                <h1><%= fetchedData.name %> Weather Information</h1>
 
                 <div class="weather-details">
                     <p class="temperature"><strong>Temperature:</strong><%= (fetchedData.main.temp - 273.15).toFixed(2) %></p>
-                    <p class="humidity"><strong>Humidit:</strong><%= fetchedData.main.humidity %></p>
+                    <p class="humidity"><strong>Humidity:</strong><%= fetchedData.main.humidity %></p>
                     <p class="wind-speed"><strong>Wind Speed:</strong><%= fetchedData.wind.speed %></p>
                 </div>
-              </div>
+
+                <div class="weather-icon">
+                <% if (fetchedData.main.temp < 273) { %>
+                    <i class="fa fa-snowflake"></i> 
+                <% } else if (fetchedData.main.temp > 303) { %>
+                    <i class="fas fa-sun" ></i>      
+                <% } else { %>
+                    <i class="fas fa-cloud" ></i> 
+                <% } %>
+                </div>
+            </div>
         </div>
-        </div>
+    </div>
         
         
         

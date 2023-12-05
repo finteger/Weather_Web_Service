@@ -9,6 +9,8 @@ const axios = require("axios");
 const multer = require("multer");
 const fs = require("fs");
 const mcache = require("memory-cache");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const port = 3000;
@@ -114,6 +116,81 @@ app.get('/', async (req, res) =>{
       res.status(500).send("Internal Server Error", error);
     }
 });
+
+app.post("/register", async (req, res) => {
+
+    const {email, password, confirmPassword} = req.body;   
+    const user = await User.findOne({email});
+
+   if(user){
+       res.status(400).send('Username already exists.  Please try again.');
+       return;
+   }
+
+   if(password != confirmPassword){
+       res.status(400).send("Passwords do not match.");
+       return;
+   }
+
+   bcrypt.hash(req.body.password, 10, (err, hashedPassword) =>{
+
+   const user = new User({
+       email: req.body.email,
+       password: hashedPassword,
+   });
+
+   user.save();
+
+   res.redirect("/login");
+
+   if(err){
+       console.error("Error while hashing password:", finderr);
+       res.status(500).send("Internal Server Error");
+       return;
+   }
+
+   }); 
+}); 
+
+
+
+app.post("/login", async (req, res) =>{
+    //shorthand 
+    const {email, password} = req.body;
+    
+    //Find user in the database by email
+    const user = await User.findOne({email});
+
+    if(!user){
+        //user is not found
+    res.status(401).send('Invalid username or password.');
+    return;
+    }
+
+
+    //Create a sign a JSON web token
+    const unique = user._id.toString();
+
+    const token = jwt.sign(unique, secretKey);
+
+    //Set the token as a cookie
+    res.cookie('jwt', token, {maxAge: 5 * 60 * 1000, httpOnly: true});
+
+
+
+    bcrypt.compare(password, user.password, (err, result) =>{
+        if(result){
+            //Passwords do match & successful
+            res.redirect("/");
+        } else if (!result){
+            res.status(401).send('Invalid username or password.');
+        } else {
+            res.status(500).send('Internal Server Error:', err);
+        }
+    });
+});
+
+
 
 
 app.get("/tracker", (req, res) =>{
