@@ -117,6 +117,10 @@ app.get('/', async (req, res) =>{
     }
 });
 
+app.get("/register", (req, res) =>{
+    res.render("register");
+});
+
 app.post("/register", async (req, res) => {
 
     const {email, password, confirmPassword} = req.body;   
