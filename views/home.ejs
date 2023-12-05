@@ -156,4 +156,41 @@
 
 </script>
 
+<script>
+    const socket = new WebSocket('ws://localhost:3000');
+    const messagesDiv = document.getElementById('messages');
+  
+    socket.addEventListener('open', (event) => {
+      console.log('WebSocket connection opened');
+    });
+  
+    socket.addEventListener('message', async (event) => {
+      const blob = await event.data;
+      const message = await blob.text(); // convert blob to string
+      console.log(`Received message: ${message}`);
+  
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message');
+      messageElement.innerText = message;
+      messagesDiv.appendChild(messageElement);
+  
+      // Scroll to the bottom of the messages container
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+  
+    const sendButton = document.getElementById('send');
+    const inputField = document.getElementById('input');
+  
+    sendButton.addEventListener('click', () => {
+      const message = inputField.value;
+      socket.send(message);
+      inputField.value = '';
+    });
+  
+    const closeButton = document.getElementById('close');
+    closeButton.addEventListener('click', () => {
+      socket.close();
+    });
+  </script>
+
 </html>

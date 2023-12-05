@@ -15,6 +15,9 @@ const User = require("./user.js");
 const cookieParser = require("cookie-parser");
 const swaggerui = require("swagger-ui-express");
 const swaggerjsdoc = require("swagger-jsdoc");
+const rateLimit = require('express-rate-limit');
+const http = require('http');
+const WebSocket = require('ws');
 
 const app = express();
 const port = 3000;
@@ -72,7 +75,13 @@ swaggerui.setup(specs, {explorer: true})
 );
     
 
-
+const apiLimiter = rateLimit({
+    windowsMS: 1 * 60 * 1000, //15 Minutes
+    max: 15,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+    
 
 //High-level middleware to cache pages in  memory
 var cache = (duration) =>{
@@ -117,7 +126,7 @@ function authenticateToken(req, res, next){
 
 
 
-app.get('/', cache(100), async (req, res) =>{
+app.get('/', async (req, res) =>{
     
     let messageType;
     let headline;
@@ -354,7 +363,7 @@ app.post("/uploadphoto", upload.single('myImage'), (req, res) => {
         image.save();  
 });
 
-app.get("/api/v1/videos", async (req, res) =>{
+app.get("/api/v1/videos", apiLimiter,  async (req, res) =>{
     try {
         const videos = await Video.find({});
         const individualVideo = videos.map((video) =>{
@@ -372,7 +381,7 @@ app.get("/api/v1/videos", async (req, res) =>{
     }
 });
 
-app.get("/api/v1/images", async (req, res) =>{
+app.get("/api/v1/images", apiLimiter, async (req, res) =>{
     try {
         const images = await Image.find({});
         const individualImage = images.map((image) =>{
@@ -390,7 +399,7 @@ app.get("/api/v1/images", async (req, res) =>{
     }
 });
 
-app.get("/api/v1/weather", async (req, res) =>{
+app.get("/api/v1/weather", apiLimiter,  async (req, res) =>{
     try{
         const weatherData =  await Weather.find({});
 
@@ -401,6 +410,26 @@ app.get("/api/v1/weather", async (req, res) =>{
     }
 });
 
+//Create a websocket server
+const server = http.createServer(app);
+const wss = new WebSocket.Server({server});
+
+//Define an event handler for new WebSocket connections
+wss.on('connection', (ws) =>{
+   console.log('Web Socket connection established');
+
+    //Define an event handler for WebSocket messages
+    ws.on('message', (message) =>{
+        console.log(`Received message: ${message}`);
+    });
+
+    //Broadcast the message to all connected clients
+    wss.clients.forEach((client) =>{
+        if(client.readyState === WebSocket.Open){
+            client.send(message);
+        }
+    });
+});
 
 
 app.listen(port, () =>{
