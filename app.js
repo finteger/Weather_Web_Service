@@ -11,6 +11,7 @@ const fs = require("fs");
 const mcache = require("memory-cache");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User = require("./user.js");
 
 const app = express();
 const port = 3000;
@@ -53,6 +54,9 @@ var cache = (duration) =>{
         next();
     }
 }
+
+
+const secretKey = '__secreykey__';
 
 
 //cache(100), 
@@ -145,7 +149,7 @@ app.post("/register", async (req, res) => {
 
    user.save();
 
-   res.redirect("/login");
+   res.redirect("/");
 
    if(err){
        console.error("Error while hashing password:", finderr);
@@ -185,7 +189,7 @@ app.post("/login", async (req, res) =>{
     bcrypt.compare(password, user.password, (err, result) =>{
         if(result){
             //Passwords do match & successful
-            res.redirect("/");
+            res.redirect("/tracker");
         } else if (!result){
             res.status(401).send('Invalid username or password.');
         } else {
